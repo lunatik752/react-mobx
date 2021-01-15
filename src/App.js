@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from "react";
+import {observer} from "mobx-react";
+import {store} from "./store";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+export function App(props)  {
+
+    return (
+        <div>
+            {store.todoLists.map(tl => <TodoListView key={tl.id} todolist={tl}/>)}
+        </div>
+    );
 }
 
-export default App;
+
+const TodoListView = observer((props) =>  {
+
+    const [taskTitle, setTaskTitle] = useState('')
+
+    const onChangeHandle = (e) => {
+        setTaskTitle(e.currentTarget.value)
+    }
+
+    const addTask = () => {
+        // props.todolist.tasks.push(new Task(taskTitle))
+        props.todolist.addTask(taskTitle)
+        setTaskTitle('')
+
+    }
+
+    return (
+        <div>
+            <h1>{props.todolist.title}</h1>
+            <input onChange={onChangeHandle} />
+            <button onClick={addTask}>add task</button>
+            <ul>
+                {props.todolist.tasks.map(t => <li key={t.id}>{t.title}</li>)}
+            </ul>
+        </div>
+    );
+})
